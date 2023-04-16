@@ -16,13 +16,102 @@
 
 package com.google.samples.apps.sunflower.plantdetail
 
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.wrapContentWidth
+import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.dimensionResource
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
+import com.google.samples.apps.sunflower.R
+import com.google.samples.apps.sunflower.data.Plant
+import com.google.samples.apps.sunflower.viewmodels.PlantDetailViewModel
 
 @Composable
-fun PlantDetailDescription() {
+fun PlantDetailDescription(plantDetailViewModel: PlantDetailViewModel) {
+    val currentPlant by plantDetailViewModel.plant.observeAsState()
+    currentPlant?.let { plant ->
+        PlantDetailDescription(plant)
+    }
+}
+
+@Composable
+private fun PlantDetailDescription(plant: Plant) {
     Surface {
-        Text("Hello Compose")
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(dimensionResource(id = R.dimen.margin_normal))
+        ) {
+            PlantName(name = plant.name)
+            PlantWatering(plant.wateringInterval)
+        }
+    }
+}
+
+@Composable
+fun PlantWatering(wateringInterval: Int) {
+    Column(
+        horizontalAlignment = Alignment.CenterHorizontally,
+        modifier = Modifier
+            .padding(
+                horizontal = dimensionResource(id = R.dimen.margin_small)
+            )
+    ) {
+        Text(
+            text = stringResource(id = R.string.watering_needs_prefix),
+            modifier = Modifier
+                .padding(top = dimensionResource(id = R.dimen.margin_normal))
+                .fillMaxWidth()
+                .wrapContentWidth(Alignment.CenterHorizontally),
+            color = MaterialTheme.colors.primaryVariant,
+            fontWeight = FontWeight.Bold
+        )
+        val resources = LocalContext.current.resources
+        val quantityString = resources.getQuantityString(
+            R.plurals.watering_needs_suffix,
+            wateringInterval,
+            wateringInterval
+        )
+        Text(text = quantityString)
+    }
+}
+
+@Preview
+@Composable
+fun PlantDetailDescriptionPreview() {
+    val fakePlant = Plant("1", "Plant Name", "Plant Description", 1, 1)
+    PlantDetailDescription(plant = fakePlant)
+}
+
+@Composable
+fun PlantName(name: String) {
+    Text(
+        text = name,
+        modifier = Modifier
+            .padding(
+                horizontal = dimensionResource(id = R.dimen.margin_small)
+            )
+            .fillMaxWidth()
+            .wrapContentWidth(Alignment.CenterHorizontally),
+        style = MaterialTheme.typography.h5
+    )
+}
+
+@Preview(backgroundColor = 0xFFFFFF, showBackground = true)
+@Composable
+fun PlantNamePreview() {
+    MaterialTheme {
+        PlantName("Plant Name")
     }
 }
