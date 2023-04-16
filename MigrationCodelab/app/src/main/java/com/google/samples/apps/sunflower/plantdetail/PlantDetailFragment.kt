@@ -117,7 +117,7 @@ class PlantDetailFragment : Fragment() {
                 ViewCompositionStrategy.DisposeOnViewTreeLifecycleDestroyed
             )
             composeView.setContent {
-                MaterialTheme {
+                MdcTheme {
                     PlantDetailDescription(plantDetailViewModel)
                 }
             }
