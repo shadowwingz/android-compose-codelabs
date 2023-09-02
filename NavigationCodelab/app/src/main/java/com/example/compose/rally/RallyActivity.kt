@@ -78,49 +78,60 @@ fun RallyApp() {
             // Box(Modifier.padding(innerPadding)) {
             //     currentScreen.screen()
             // }
-            NavHost(
+            RallyNavHost(
                 navController = navController,
-                startDestination = Overview.route,
                 modifier = Modifier.padding(innerPadding)
-            ) {
-                composable(route = Overview.route) {
-                    // Overview.screen()
-                    OverviewScreen(
-                        onClickSeeAllAccounts = {
-                            navController.navigationSingleTopTo(Accounts.route)
-                        },
-                        onClickSeeAllBills = {
-                            navController.navigationSingleTopTo(Bills.route)
-                        },
-                        onAccountClick = { accountType ->
-                            navController.navigateToSingleAccount(accountType)
-                        }
-                    )
+            )
+        }
+    }
+}
+
+@Composable
+private fun RallyNavHost(
+    navController: NavHostController,
+    modifier: Modifier
+) {
+    NavHost(
+        navController = navController,
+        startDestination = Overview.route,
+        modifier = modifier
+    ) {
+        composable(route = Overview.route) {
+            // Overview.screen()
+            OverviewScreen(
+                onClickSeeAllAccounts = {
+                    navController.navigationSingleTopTo(Accounts.route)
+                },
+                onClickSeeAllBills = {
+                    navController.navigationSingleTopTo(Bills.route)
+                },
+                onAccountClick = { accountType ->
+                    navController.navigateToSingleAccount(accountType)
                 }
-                composable(route = Accounts.route) {
-                    // Accounts.screen()
-                    AccountsScreen(
-                        onAccountClick = { accountType ->
-                            navController.navigateToSingleAccount(accountType)
-                        }
-                    )
+            )
+        }
+        composable(route = Accounts.route) {
+            // Accounts.screen()
+            AccountsScreen(
+                onAccountClick = { accountType ->
+                    navController.navigateToSingleAccount(accountType)
                 }
-                composable(route = Bills.route) {
-                    // Bills.screen()
-                    BillsScreen()
-                }
-                composable(
-                    // 导航到 SingleAccount 页面并传递参数
-                    route = SingleAccount.routeWithArgs,
-                    // 限定参数的类型
-                    arguments = SingleAccount.arguments
-                ) { navBackStackEntry ->
-                    // 取出传递过来的参数
-                    val accountType = navBackStackEntry.arguments?.getString(SingleAccount.accountTypeArg)
-                    // 将参数传递给 SingleAccountScreen
-                    SingleAccountScreen(accountType)
-                }
-            }
+            )
+        }
+        composable(route = Bills.route) {
+            // Bills.screen()
+            BillsScreen()
+        }
+        composable(
+            // 导航到 SingleAccount 页面并传递参数
+            route = SingleAccount.routeWithArgs,
+            // 限定参数的类型
+            arguments = SingleAccount.arguments
+        ) { navBackStackEntry ->
+            // 取出传递过来的参数
+            val accountType = navBackStackEntry.arguments?.getString(SingleAccount.accountTypeArg)
+            // 将参数传递给 SingleAccountScreen
+            SingleAccountScreen(accountType)
         }
     }
 }
