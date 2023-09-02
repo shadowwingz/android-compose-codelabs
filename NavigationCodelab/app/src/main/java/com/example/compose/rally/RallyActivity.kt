@@ -30,11 +30,14 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
 import com.example.compose.rally.ui.accounts.AccountsScreen
+import com.example.compose.rally.ui.accounts.SingleAccountScreen
 import com.example.compose.rally.ui.bills.BillsScreen
 import com.example.compose.rally.ui.components.RallyTabRow
 import com.example.compose.rally.ui.overview.OverviewScreen
@@ -88,20 +91,42 @@ fun RallyApp() {
                         },
                         onClickSeeAllBills = {
                             navController.navigationSingleTopTo(Bills.route)
+                        },
+                        onAccountClick = { accountType ->
+                            navController.navigateToSingleAccount(accountType)
                         }
                     )
                 }
                 composable(route = Accounts.route) {
                     // Accounts.screen()
-                    AccountsScreen()
+                    AccountsScreen(
+                        onAccountClick = { accountType ->
+                            navController.navigateToSingleAccount(accountType)
+                        }
+                    )
                 }
                 composable(route = Bills.route) {
                     // Bills.screen()
                     BillsScreen()
                 }
+                composable(
+                    // 导航到 SingleAccount 页面并传递参数
+                    route = SingleAccount.routeWithArgs,
+                    // 限定参数的类型
+                    arguments = SingleAccount.arguments
+                ) { navBackStackEntry ->
+                    // 取出传递过来的参数
+                    val accountType = navBackStackEntry.arguments?.getString(SingleAccount.accountTypeArg)
+                    // 将参数传递给 SingleAccountScreen
+                    SingleAccountScreen(accountType)
+                }
             }
         }
     }
+}
+
+private fun NavHostController.navigateToSingleAccount(accountType: String) {
+    this.navigationSingleTopTo("${SingleAccount.route}/${accountType}")
 }
 
 fun NavHostController.navigationSingleTopTo(route: String) =
